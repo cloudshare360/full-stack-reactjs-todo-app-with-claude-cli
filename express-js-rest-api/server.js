@@ -8,8 +8,9 @@ const connectDB = require('./src/config/database');
 const todoRoutes = require('./src/routes/todoRoutes');
 const errorHandler = require('./src/middleware/errorHandler');
 
-// Load env vars
+// Load environment configuration
 dotenv.config();
+const { getConfig, getCORSOrigins, printConfig } = require('../config/environment');
 
 // Connect to database
 connectDB();
@@ -19,12 +20,24 @@ const app = express();
 // Security middleware
 app.use(helmet());
 
-// CORS middleware
+// Dynamic CORS middleware
+const corsOrigins = getCORSOrigins();
 app.use(cors({
-  origin: process.env.NODE_ENV === 'production'
-    ? 'https://yourdomain.com'
-    : ['http://localhost:3000', 'http://localhost:3001'],
-  credentials: true
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps or Postman)
+    if (!origin) return callback(null, true);
+
+    if (corsOrigins.indexOf(origin) !== -1 || process.env.NODE_ENV === 'development') {
+      return callback(null, true);
+    } else {
+      console.log(`❌ CORS blocked origin: ${origin}`);
+      return callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin'],
+  exposedHeaders: ['X-Total-Count', 'X-Page-Count']
 }));
 
 // Logging middleware
@@ -71,15 +84,17 @@ app.use((req, res) => {
 // Error handler middleware (must be last)
 app.use(errorHandler);
 
-const PORT = process.env.PORT || 5000;
+const config = getConfig();
+const PORT = config.api.port;
 
 const server = app.listen(PORT, () => {
-  console.log(`
-🚀 Server running in ${process.env.NODE_ENV} mode on port ${PORT}
-📱 Frontend URL: http://localhost:3000
-🔧 API URL: http://localhost:${PORT}
-📊 Health Check: http://localhost:${PORT}/api/health
-  `);
+  console.log(`🚀 Todo API Server Started Successfully!`);
+
+  // Print dynamic configuration
+  printConfig();
+
+  console.log(`📊 Health Check: ${config.api.baseURL}/api/health`);
+  console.log(`✅ Server ready to accept connections\n`);
 });
 
 // Handle unhandled promise rejections

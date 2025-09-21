@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="SwaggerUI for Todo API" />
+  <title>Todo API Documentation</title>
+  <link rel="stylesheet" href="https://unpkg.com/swagger-ui-dist@5.9.0/swagger-ui.css" />
+  <style>
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+    }
+    .swagger-ui .topbar {
+      background: #2E86AB;
+      padding: 10px 0;
+    }
+    .swagger-ui .topbar .link {
+      color: white;
+      font-size: 1.5em;
+      font-weight: bold;
+    }
+    .swagger-ui .info .title {
+      color: #2E86AB;
+    }
+    .custom-header {
+      background: linear-gradient(135deg, #2E86AB 0%, #A23B72 100%);
+      color: white;
+      padding: 20px;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .custom-header h1 {
+      margin: 0;
+      font-size: 2.5em;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    }
+    .custom-header p {
+      margin: 10px 0 0 0;
+      font-size: 1.1em;
+      opacity: 0.9;
+    }
+    .api-status {
+      display: inline-block;
+      background: rgba(255,255,255,0.2);
+      padding: 5px 15px;
+      border-radius: 20px;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="custom-header">
+    <h1>🚀 Todo API Documentation</h1>
+    <p>Complete REST API for Todo Management</p>
+    <div class="api-status">
+      <span id="api-status">🟡 Checking API Status...</span>
+    </div>
+  </div>
+
+  <div id="swagger-ui"></div>
+
+  <script src="https://unpkg.com/swagger-ui-dist@5.9.0/swagger-ui-bundle.js" crossorigin></script>
+  <script>
+    // Check API status
+    async function checkAPIStatus() {
+      try {
+        const apiURL = getAPIServerURL();
+        const response = await fetch(`${apiURL}/api/todos/stats`);
+        if (response.ok) {
+          document.getElementById('api-status').innerHTML = '🟢 API Online';
+          document.getElementById('api-status').style.background = 'rgba(76, 175, 80, 0.3)';
+          document.getElementById('api-status').title = `Connected to: ${apiURL}`;
+        } else {
+          throw new Error('API not responding');
+        }
+      } catch (error) {
+        const apiURL = getAPIServerURL();
+        document.getElementById('api-status').innerHTML = '🔴 API Offline';
+        document.getElementById('api-status').style.background = 'rgba(244, 67, 54, 0.3)';
+        document.getElementById('api-status').title = `Failed to connect to: ${apiURL}`;
+      }
+    }
+
+    // Initialize Swagger UI
+    window.onload = function() {
+      // Check API status on load
+      checkAPIStatus();
+
+      // Check API status every 30 seconds
+      setInterval(checkAPIStatus, 30000);
+
+      // Initialize Swagger UI
+      // Dynamic API server detection
+      function getAPIServerURL() {
+        const hostname = window.location.hostname;
+        const protocol = window.location.protocol;
+        const apiPort = '5000'; // Default API port
+
+        // For localhost, use localhost; otherwise use current hostname
+        const apiHost = hostname === 'localhost' ? 'localhost' : hostname;
+
+        return `${protocol}//${apiHost}:${apiPort}`;
+      }
+
+      const ui = SwaggerUIBundle({
+        url: './todo-api-swagger.yaml',
+        dom_id: '#swagger-ui',
+        deepLinking: true,
+        servers: [
+          {
+            url: getAPIServerURL(),
+            description: 'Dynamic API Server'
+          }
+        ],
+        presets: [
+          SwaggerUIBundle.presets.apis,
+          SwaggerUIBundle.presets.standalone
+        ],
+        plugins: [
+          SwaggerUIBundle.plugins.DownloadUrl
+        ],
+        layout: "StandaloneLayout",
+        tryItOutEnabled: true,
+        requestInterceptor: (request) => {
+          // Add any request interceptors here
+          console.log('Making request to:', request.url);
+          return request;
+        },
+        responseInterceptor: (response) => {
+          // Add any response interceptors here
+          console.log('Received response from:', response.url);
+          return response;
+        },
+        onComplete: () => {
+          console.log('Swagger UI loaded successfully');
+        },
+        onFailure: (error) => {
+          console.error('Swagger UI failed to load:', error);
+        },
+        docExpansion: 'list',
+        defaultModelsExpandDepth: 1,
+        defaultModelExpandDepth: 1,
+        displayOperationId: false,
+        displayRequestDuration: true,
+        filter: true,
+        showExtensions: true,
+        showCommonExtensions: true,
+        supportedSubmitMethods: ['get', 'post', 'put', 'delete', 'patch'],
+        validatorUrl: null
+      })
+
+      // Add custom functionality after UI loads
+      setTimeout(() => {
+        // Add custom buttons or functionality
+        const topbar = document.querySelector('.swagger-ui .topbar');
+        if (topbar) {
+          const customActions = document.createElement('div');
+          customActions.style.cssText = 'float: right; padding: 10px;';
+          customActions.innerHTML = `
+            <button onclick="window.open('./test-results.html', '_blank')"
+                    style="background: #61affe; color: white; border: none; padding: 8px 16px; border-radius: 4px; margin-left: 10px; cursor: pointer;">
+              View Test Results
+            </button>
+            <button onclick="location.reload()"
+                    style="background: #49cc90; color: white; border: none; padding: 8px 16px; border-radius: 4px; margin-left: 10px; cursor: pointer;">
+              Refresh
+            </button>
+          `;
+          topbar.appendChild(customActions);
+        }
+      }, 1000);
+    }
+  </script>
+</body>
+</html>

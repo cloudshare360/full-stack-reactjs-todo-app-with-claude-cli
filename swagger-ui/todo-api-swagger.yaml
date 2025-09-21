@@ -1,0 +1,491 @@
+openapi: 3.0.3
+info:
+  title: Todo API
+  description: |
+    A comprehensive REST API for managing todos with full CRUD operations.
+
+    ## Features
+    - Create, read, update, and delete todos
+    - Mark todos as completed/incomplete
+    - Set priority levels (low, medium, high)
+    - Get todo statistics
+    - Input validation and error handling
+
+    ## Base URL
+    Development: `http://localhost:5000`
+  version: 1.0.0
+  contact:
+    name: Todo API Support
+    url: https://github.com/cloudshare360/full-stack-reactjs-todo-app-with-claude-cli
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+
+servers:
+  - url: http://localhost:5000
+    description: Development server
+
+paths:
+  /api/todos:
+    get:
+      summary: Get all todos
+      description: Retrieve a list of all todos with optional filtering by completion status
+      tags:
+        - Todos
+      parameters:
+        - name: completed
+          in: query
+          description: Filter todos by completion status
+          required: false
+          schema:
+            type: boolean
+        - name: priority
+          in: query
+          description: Filter todos by priority level
+          required: false
+          schema:
+            type: string
+            enum: [low, medium, high]
+      responses:
+        '200':
+          description: Successfully retrieved todos
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  count:
+                    type: integer
+                    example: 3
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Todo'
+              examples:
+                success:
+                  summary: Successful response
+                  value:
+                    success: true
+                    count: 2
+                    data:
+                      - _id: "64a1b2c3d4e5f6789012345"
+                        title: "Complete project documentation"
+                        description: "Write comprehensive API documentation with examples"
+                        completed: false
+                        priority: "high"
+                        createdAt: "2025-09-21T10:30:00.000Z"
+                        updatedAt: "2025-09-21T10:30:00.000Z"
+                      - _id: "64a1b2c3d4e5f6789012346"
+                        title: "Review pull requests"
+                        description: "Check and approve pending code reviews"
+                        completed: true
+                        priority: "medium"
+                        createdAt: "2025-09-21T09:15:00.000Z"
+                        updatedAt: "2025-09-21T11:45:00.000Z"
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    post:
+      summary: Create a new todo
+      description: Create a new todo item with title, description, and priority
+      tags:
+        - Todos
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTodoRequest'
+            examples:
+              basic:
+                summary: Basic todo
+                value:
+                  title: "Buy groceries"
+                  description: "Get milk, bread, and eggs from the store"
+                  priority: "medium"
+              minimal:
+                summary: Minimal todo (title only)
+                value:
+                  title: "Call dentist"
+              high_priority:
+                summary: High priority todo
+                value:
+                  title: "Fix critical bug in production"
+                  description: "Urgent: Users cannot complete checkout process"
+                  priority: "high"
+      responses:
+        '201':
+          description: Todo created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    $ref: '#/components/schemas/Todo'
+              examples:
+                created:
+                  summary: Successfully created todo
+                  value:
+                    success: true
+                    data:
+                      _id: "64a1b2c3d4e5f6789012347"
+                      title: "Buy groceries"
+                      description: "Get milk, bread, and eggs from the store"
+                      completed: false
+                      priority: "medium"
+                      createdAt: "2025-09-21T12:00:00.000Z"
+                      updatedAt: "2025-09-21T12:00:00.000Z"
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/todos/{id}:
+    get:
+      summary: Get a specific todo
+      description: Retrieve a single todo by its ID
+      tags:
+        - Todos
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The todo ID
+          schema:
+            type: string
+            pattern: '^[0-9a-fA-F]{24}$'
+          example: "64a1b2c3d4e5f6789012345"
+      responses:
+        '200':
+          description: Todo found successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    $ref: '#/components/schemas/Todo'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    put:
+      summary: Update a todo
+      description: Update an existing todo's title, description, completion status, or priority
+      tags:
+        - Todos
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The todo ID
+          schema:
+            type: string
+            pattern: '^[0-9a-fA-F]{24}$'
+          example: "64a1b2c3d4e5f6789012345"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateTodoRequest'
+            examples:
+              complete_todo:
+                summary: Mark todo as completed
+                value:
+                  completed: true
+              update_content:
+                summary: Update title and description
+                value:
+                  title: "Buy groceries and household items"
+                  description: "Get milk, bread, eggs, and cleaning supplies"
+                  priority: "high"
+              partial_update:
+                summary: Update only priority
+                value:
+                  priority: "low"
+      responses:
+        '200':
+          description: Todo updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    $ref: '#/components/schemas/Todo'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    delete:
+      summary: Delete a todo
+      description: Permanently delete a todo by its ID
+      tags:
+        - Todos
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The todo ID
+          schema:
+            type: string
+            pattern: '^[0-9a-fA-F]{24}$'
+          example: "64a1b2c3d4e5f6789012345"
+      responses:
+        '200':
+          description: Todo deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Todo deleted successfully"
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/todos/stats:
+    get:
+      summary: Get todo statistics
+      description: Retrieve statistics about todos including counts by status and priority
+      tags:
+        - Statistics
+      responses:
+        '200':
+          description: Statistics retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    properties:
+                      total:
+                        type: integer
+                        example: 15
+                      completed:
+                        type: integer
+                        example: 8
+                      pending:
+                        type: integer
+                        example: 7
+                      completionRate:
+                        type: number
+                        format: float
+                        example: 53.33
+                      priorityBreakdown:
+                        type: object
+                        properties:
+                          low:
+                            type: integer
+                            example: 5
+                          medium:
+                            type: integer
+                            example: 7
+                          high:
+                            type: integer
+                            example: 3
+              examples:
+                stats:
+                  summary: Sample statistics
+                  value:
+                    success: true
+                    data:
+                      total: 15
+                      completed: 8
+                      pending: 7
+                      completionRate: 53.33
+                      priorityBreakdown:
+                        low: 5
+                        medium: 7
+                        high: 3
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+components:
+  schemas:
+    Todo:
+      type: object
+      properties:
+        _id:
+          type: string
+          description: Unique identifier for the todo
+          example: "64a1b2c3d4e5f6789012345"
+        title:
+          type: string
+          description: The todo title
+          maxLength: 100
+          example: "Complete project documentation"
+        description:
+          type: string
+          description: Detailed description of the todo
+          maxLength: 500
+          example: "Write comprehensive API documentation with examples"
+        completed:
+          type: boolean
+          description: Whether the todo is completed
+          example: false
+        priority:
+          type: string
+          enum: [low, medium, high]
+          description: Priority level of the todo
+          example: "high"
+        createdAt:
+          type: string
+          format: date-time
+          description: When the todo was created
+          example: "2025-09-21T10:30:00.000Z"
+        updatedAt:
+          type: string
+          format: date-time
+          description: When the todo was last updated
+          example: "2025-09-21T10:30:00.000Z"
+      required:
+        - _id
+        - title
+        - completed
+        - priority
+        - createdAt
+        - updatedAt
+
+    CreateTodoRequest:
+      type: object
+      properties:
+        title:
+          type: string
+          description: The todo title
+          maxLength: 100
+          example: "Buy groceries"
+        description:
+          type: string
+          description: Detailed description of the todo
+          maxLength: 500
+          example: "Get milk, bread, and eggs from the store"
+        priority:
+          type: string
+          enum: [low, medium, high]
+          description: Priority level of the todo
+          default: medium
+          example: "medium"
+      required:
+        - title
+
+    UpdateTodoRequest:
+      type: object
+      properties:
+        title:
+          type: string
+          description: The todo title
+          maxLength: 100
+          example: "Buy groceries and household items"
+        description:
+          type: string
+          description: Detailed description of the todo
+          maxLength: 500
+          example: "Get milk, bread, eggs, and cleaning supplies"
+        completed:
+          type: boolean
+          description: Whether the todo is completed
+          example: true
+        priority:
+          type: string
+          enum: [low, medium, high]
+          description: Priority level of the todo
+          example: "high"
+
+    Error:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        error:
+          type: string
+          description: Error message
+          example: "Todo not found"
+
+  responses:
+    ValidationError:
+      description: Validation error in request body
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              error:
+                type: string
+                example: "Title is required"
+          examples:
+            missing_title:
+              summary: Missing required title
+              value:
+                success: false
+                error: "Title is required"
+            invalid_priority:
+              summary: Invalid priority value
+              value:
+                success: false
+                error: "Priority must be one of: low, medium, high"
+
+    NotFoundError:
+      description: Todo not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            not_found:
+              summary: Todo not found
+              value:
+                success: false
+                error: "Todo not found"
+
+    InternalServerError:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            server_error:
+              summary: Server error
+              value:
+                success: false
+                error: "Internal server error"
+
+tags:
+  - name: Todos
+    description: Operations related to todo management
+  - name: Statistics
+    description: Operations related to todo statistics and analytics
