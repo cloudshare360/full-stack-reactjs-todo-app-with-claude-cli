@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>React.js Interview Questions - Todo Application</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f9f9f9;
+        }
+        
+        .container {
+            background-color: white;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            color: #2c3e50;
+            border-bottom: 3px solid #e74c3c;
+            padding-bottom: 10px;
+            text-align: center;
+        }
+        
+        h2 {
+            color: #34495e;
+            margin-top: 40px;
+            border-left: 4px solid #e74c3c;
+            padding-left: 15px;
+            background-color: #fdf2f2;
+            padding: 10px 0 10px 15px;
+            border-radius: 0 4px 4px 0;
+        }
+        
+        h3 {
+            color: #c0392b;
+            margin-top: 30px;
+        }
+        
+        .question {
+            background-color: #f8f9fa;
+            border-left: 4px solid #17a2b8;
+            padding: 15px;
+            margin: 20px 0 10px 0;
+            border-radius: 0 4px 4px 0;
+        }
+        
+        .question strong {
+            color: #17a2b8;
+            font-size: 1.05em;
+        }
+        
+        .answer {
+            background-color: #f1f8ff;
+            border-left: 4px solid #28a745;
+            padding: 15px;
+            margin: 10px 0 30px 0;
+            border-radius: 0 4px 4px 0;
+        }
+        
+        .answer strong {
+            color: #28a745;
+        }
+        
+        pre {
+            background-color: #f4f4f4;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 15px;
+            overflow-x: auto;
+            font-size: 0.9em;
+        }
+        
+        code {
+            background-color: #f4f4f4;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            color: #d73a49;
+        }
+        
+        pre code {
+            background-color: transparent;
+            padding: 0;
+            color: #333;
+        }
+        
+        .nav-links {
+            text-align: center;
+            margin: 30px 0;
+            padding: 20px;
+            background-color: #e74c3c;
+            border-radius: 4px;
+        }
+        
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            margin: 0 15px;
+            padding: 8px 15px;
+            border: 1px solid white;
+            border-radius: 3px;
+            display: inline-block;
+        }
+        
+        .nav-links a:hover {
+            background-color: white;
+            color: #e74c3c;
+        }
+        
+        .difficulty-badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        
+        .basic { background-color: #d4edda; color: #155724; }
+        .intermediate { background-color: #fff3cd; color: #856404; }
+        .advanced { background-color: #f8d7da; color: #721c24; }
+        
+        ul {
+            padding-left: 20px;
+        }
+        
+        li {
+            margin-bottom: 8px;
+        }
+        
+        .toc {
+            background-color: #e9ecef;
+            padding: 20px;
+            border-radius: 4px;
+            margin-bottom: 30px;
+        }
+        
+        .toc h3 {
+            margin-top: 0;
+            color: #495057;
+        }
+        
+        .toc ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        
+        .toc li {
+            margin-bottom: 5px;
+        }
+        
+        .toc a {
+            color: #007bff;
+            text-decoration: none;
+        }
+        
+        .toc a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="nav-links">
+            <a href="application-flow.html">← Application Flow</a>
+            <a href="../index.html">Documentation Home</a>
+            <a href="../expressjs/application-flow.html">Express.js Flow →</a>
+        </div>
+
+        <h1>React.js Interview Questions - Todo Application</h1>
+        
+        <div class="toc">
+            <h3>Table of Contents</h3>
+            <ul>
+                <li><a href="#basic">Basic React Concepts</a></li>
+                <li><a href="#intermediate">Intermediate React Concepts</a></li>
+                <li><a href="#advanced">Advanced React Concepts</a></li>
+                <li><a href="#practical">Practical Scenarios</a></li>
+            </ul>
+        </div>
+
+        <h2 id="basic">Basic React Concepts <span class="difficulty-badge basic">BASIC</span></h2>
+
+        <h3>1. Component Architecture & Design</h3>
+
+        <div class="question">
+            <strong>Q: Explain the component hierarchy in this Todo application. Why is it structured this way?</strong>
+        </div>
+        
+        <div class="answer">
+            <strong>A:</strong> The application follows a hierarchical structure:
+            <ul>
+                <li><strong>App (Root)</strong>: Manages global state (refreshKey) and coordinates child components</li>
+                <li><strong>AddTodoForm</strong>: Handles todo creation with form state management</li>
+                <li><strong>TodoList</strong>: Manages todo display, fetching, and CRUD operations</li>
+                <li><strong>TodoItem</strong>: Individual todo with inline editing capabilities</li>
+            </ul>
+            <p>This structure follows single responsibility principle where each component has a specific purpose and promotes reusability.</p>
+        </div>
+
+        <div class="question">
+            <strong>Q: How does the App component coordinate between AddTodoForm and TodoList?</strong>
+        </div>
+        
+        <div class="answer">
+            <strong>A:</strong> The App component uses a callback pattern:
+            <pre><code>const handleTodoAdded = useCallback((newTodo: Todo) => {
+  setRefreshKey(prev => prev + 1);
+}, []);</code></pre>
+            <p>When a todo is added, it increments <code>refreshKey</code>, which forces TodoList to remount and fetch fresh data.</p>
+        </div>
+
+        <h3>2. State Management</h3>
+
+        <div class="question">
+            <strong>Q: Why does the application use local state instead of Context API or Redux?</strong>
+        </div>
+        
+        <div class="answer">
+            <strong>A:</strong> The application requirements are simple with minimal state sharing:
+            <ul>
+                <li>Form state is local to AddTodoForm</li>
+                <li>Todo list state is local to TodoList</li>
+                <li>Only coordination needed is refresh trigger (handled by callback)</li>
+                <li>This follows the principle of "start simple and add complexity when needed"</li>
+            </ul>
+        </div>
+
+        <div class="question">
+            <strong>Q: Explain the refreshKey pattern. Why not just call a refresh function directly?</strong>
+        </div>
+        
+        <div class="answer">
+            <strong>A:</strong> The refreshKey pattern offers several advantages:
+            <pre><code>// Force component remount and fresh data fetch
+&lt;TodoList key={refreshKey} /&gt;</code></pre>
+            <ul>
+                <li><strong>Clean separation</strong>: No need to pass refresh functions down</li>
+                <li><strong>React lifecycle</strong>: Leverages React's natural mounting behavior</li>
+                <li><strong>Consistent state</strong>: Ensures TodoList starts with clean state</li>
+                <li><strong>Error recovery</strong>: Clears any error states from previous renders</li>
+            </ul>
+        </div>
+
+        <h3>3. Hooks Usage</h3>
+
+        <div class="question">
+            <strong>Q: How is useEffect used in the TodoList component? What are the dependencies?</strong>
+        </div>
+        
+        <div class="answer">
+            <strong>A:</strong>
+            <pre><code>useEffect(() => {
+  fetchTodos();
+}, []); // Empty dependency array</code></pre>
+            <ul>
+                <li>Runs once on component mount (due to empty deps)</li>
+                <li>When key changes, component remounts, so useEffect runs again</li>
+                <li>This pattern ensures fresh data on both initial load and after todo creation</li>
+            </ul>
+        </div>
+
+        <div class="question">
+            <strong>Q: Why use useCallback for handleTodoAdded in App component?</strong>
+        </div>
+        
+        <div class="answer">
+            <strong>A:</strong>
+            <pre><code>const handleTodoAdded = useCallback((newTodo: Todo) => {
+  setRefreshKey(prev => prev + 1);
+}, []);</code></pre>
+            <ul>
+                <li>Prevents unnecessary re-renders of AddTodoForm</li>
+                <li>Maintains referential equality across App re-renders</li>
+                <li>Good practice for callback props to child components</li>
+            </ul>
+        </div>
+
+        <h3>4. Form Handling</h3>
+
+        <div class="question">
+            <strong>Q: Explain the controlled component pattern used in AddTodoForm.</strong>
+        </div>
+        
+        <div class="answer">
+            <strong>A:</strong> All form inputs are controlled by component state:
+            <pre><code>const [title, setTitle] = useState('');
+const [description, setDescription] = useState('');
+
+&lt;input
+  value={title}
+  onChange={(e) => setTitle(e.target.value)}
+/&gt;</code></pre>
+            <ul>
+                <li>Single source of truth for form data</li>
+                <li>Real-time validation possible</li>
+                <li>Easy to reset form after submission</li>
+            </ul>
+        </div>
+
+        <div class="question">
+            <strong>Q: How does form validation work in this application?</strong>
+        </div>
+        
+        <div class="answer">
+            <strong>A:</strong> Multi-layered validation:
+            <ul>
+                <li><strong>Client-side</strong>: <code>!title.trim()</code> prevents empty submissions</li>
+                <li><strong>Visual feedback</strong>: Button disabled when invalid</li>
+                <li><strong>Server-side</strong>: Express-validator provides backend validation</li>
+                <li><strong>Error handling</strong>: API errors displayed to user</li>
+            </ul>
+        </div>
+
+        <h2 id="intermediate">Intermediate React Concepts <span class="difficulty-badge intermediate">INTERMEDIATE</span></h2>
+
+        <h3>5. Component Lifecycle & Effects</h3>
+
+        <div class="question">
+            <strong>Q: Describe the lifecycle of TodoList component from mount to unmount.</strong>
+        </div>
+        
+        <div class="answer">
+            <strong>A:</strong>
+            <ol>
+                <li><strong>Mount</strong>: Component mounts with initial state</li>
+                <li><strong>Effect</strong>: useEffect triggers fetchTodos()</li>
+                <li><strong>Loading</strong>: Shows loading spinner while API call in progress</li>
+                <li><strong>Update</strong>: State updated with fetched todos</li>
+                <li><strong>Render</strong>: Displays todo items</li>
+                <li><strong>User interactions</strong>: Local state updates for CRUD operations</li>
+                <li><strong>Key change</strong>: Component unmounts when refreshKey changes</li>
+                <li><strong>Remount</strong>: New instance mounts with fresh state</li>
+            </ol>
+        </div>
+
+        <div class="question">
+            <strong>Q: How does the application handle component cleanup?</strong>
+        </div>
+        
+        <div class="answer">
+            <strong>A:</strong>
+            <ul>
+                <li>Components use local state, so cleanup is automatic</li>
+                <li>No manual cleanup needed for API calls (they're not cancelled)</li>
+                <li>Could be improved with AbortController for cancelling in-flight requests</li>
+            </ul>
+        </div>
+
+        <h3>6. Performance Optimization</h3>
+
+        <div class="question">
+            <strong>Q: What performance optimizations are implemented in this React application?</strong>
+        </div>
+        
+        <div class="answer">
+            <strong>A:</strong>
+            <ul>
+                <li><strong>useCallback</strong>: Prevents unnecessary AddTodoForm re-renders</li>
+                <li><strong>Local state updates</strong>: Immediate UI feedback without API calls</li>
+                <li><strong>Strategic re-mounting</strong>: Only fetch fresh data when actually needed</li>
+                <li><strong>Key prop optimization</strong>: Efficient way to trigger data refresh</li>
+            </ul>
+        </div>
+
+        <div class="question">
+            <strong>Q: How would you optimize this application further?</strong>
+        </div>
+        
+        <div class="answer">
+            <strong>A:</strong> Potential improvements:
+            <pre><code>// React.memo for TodoItem
+const TodoItem = React.memo(({ todo, onToggle, onDelete, onUpdate }) => {
+  // Component implementation
+});
+
+// useMemo for expensive computations
+const sortedTodos = useMemo(() => 
+  todos.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)),
+  [todos]
+);
+
+// AbortController for request cancellation
+const controller = new AbortController();
+fetch(url, { signal: controller.signal });</code></pre>
+        </div>
+
+        <h3>7. Error Handling</h3>
+
+        <div class="question">
+            <strong>Q: How does error handling work in this React application?</strong>
+        </div>
+        
+        <div class="answer">
+            <strong>A:</strong> Multi-level error handling:
+            <pre><code>// Component level
+try {
+  const result = await todoAPI.createTodo(todo);
+  // Success handling
+} catch (error) {
+  console.error('Failed to create todo:', error);
+  alert('Failed to create todo. Please try again.');
+}
+
+// Service level
+if (!response.ok) {
+  throw new Error('Failed to create todo');
+}
+
+// State level
+const [error, setError] = useState&lt;string&gt;('');</code></pre>
+        </div>
+
+        <div class="question">
+            <strong>Q: What improvements could be made to error handling?</strong>
+        </div>
+        
+        <div class="answer">
+            <strong>A:</strong>
+            <ul>
+                <li>Error boundaries for unhandled errors</li>
+                <li>Global error state management</li>
+                <li>Retry mechanisms for failed requests</li>
+                <li>Better user feedback with toast notifications</li>
+                <li>Network status detection</li>
+            </ul>
+        </div>
+
+        <h2 id="advanced">Advanced React Concepts <span class="difficulty-badge advanced">ADVANCED</span></h2>
+
+        <h3>8. TypeScript Integration</h3>
+
+        <div class="question">
+            <strong>Q: How does TypeScript improve this React application?</strong>
+        </div>
+        
+        <div class="answer">
+            <strong>A:</strong> TypeScript provides:
+            <pre><code>interface Todo {
+  _id: string;
+  title: string;
+  description?: string;
+  completed: boolean;
+  priority: 'low' | 'medium' | 'high';
+  createdAt: string;
+  updatedAt: string;
+}
+
+interface AddTodoFormProps {
+  onTodoAdded: (todo: Todo) => void;
+}</code></pre>
+            <ul>
+                <li><strong>Type safety</strong>: Catches errors at compile time</li>
+                <li><strong>Better IDE support</strong>: Autocomplete and refactoring</li>
+                <li><strong>API contract</strong>: Ensures frontend matches backend types</li>
+                <li><strong>Documentation</strong>: Types serve as inline documentation</li>
+            </ul>
+        </div>
+
+        <h3>9. API Integration</h3>
+
+        <div class="question">
+            <strong>Q: Explain the service layer pattern used for API calls.</strong>
+        </div>
+        
+        <div class="answer">
+            <strong>A:</strong>
+            <pre><code>class TodoAPI {
+  async getAllTodos(): Promise&lt;Todo[]&gt; {
+    const response = await fetch(`${API_BASE_URL}/todos`);
+    if (!response.ok) {
+      throw new Error('Failed to fetch todos');
+    }
+    const result = await response.json();
+    return result.data;
+  }
+}</code></pre>
+            <ul>
+                <li><strong>Separation of concerns</strong>: API logic separate from components</li>
+                <li><strong>Reusability</strong>: Service methods used by multiple components</li>
+                <li><strong>Consistency</strong>: Standardized error handling</li>
+                <li><strong>Testing</strong>: Easier to mock service layer</li>
+            </ul>
+        </div>
+
+        <div class="question">
+            <strong>Q: How would you implement request caching in this application?</strong>
+        </div>
+        
+        <div class="answer">
+            <strong>A:</strong>
+            <pre><code>class TodoAPI {
+  private cache = new Map&lt;string, { data: any, timestamp: number }&gt;();
+  private CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
+
+  async getAllTodos(): Promise&lt;Todo[]&gt; {
+    const cacheKey = 'todos';
+    const cached = this.cache.get(cacheKey);
+    
+    if (cached && Date.now() - cached.timestamp < this.CACHE_DURATION) {
+      return cached.data;
+    }
+    
+    const data = await this.fetchFromAPI();
+    this.cache.set(cacheKey, { data, timestamp: Date.now() });
+    return data;
+  }
+}</code></pre>
+        </div>
+
+        <h3>10. Testing Considerations</h3>
+
+        <div class="question">
+            <strong>Q: How would you test the TodoList component?</strong>
+        </div>
+        
+        <div class="answer">
+            <strong>A:</strong>
+            <pre><code>import { render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import TodoList from './TodoList';
+
+// Mock the API
+jest.mock('../services/todoAPI', () => ({
+  todoAPI: {
+    getAllTodos: jest.fn(),
+    updateTodo: jest.fn(),
+    deleteTodo: jest.fn(),
+  }
+}));
+
+test('displays loading state initially', () => {
+  render(&lt;TodoList /&gt;);
+  expect(screen.getByText('Loading todos...')).toBeInTheDocument();
+});
+
+test('displays todos after loading', async () => {
+  const mockTodos = [{ _id: '1', title: 'Test Todo', completed: false }];
+  (todoAPI.getAllTodos as jest.Mock).mockResolvedValue(mockTodos);
+  
+  render(&lt;TodoList /&gt;);
+  
+  await waitFor(() => {
+    expect(screen.getByText('Test Todo')).toBeInTheDocument();
+  });
+});</code></pre>
+        </div>
+
+        <h2 id="practical">Practical Scenarios <span class="difficulty-badge advanced">PRACTICAL</span></h2>
+
+        <h3>11. Real-world Implementation Questions</h3>
+
+        <div class="question">
+            <strong>Q: How would you implement optimistic updates for better UX?</strong>
+        </div>
+        
+        <div class="answer">
+            <strong>A:</strong>
+            <pre><code>const handleToggleComplete = async (id: string, completed: boolean) => {
+  // Optimistic update
+  setTodos(todos.map(todo =>
+    todo._id === id ? { ...todo, completed } : todo
+  ));
+
+  try {
+    const updatedTodo = await todoAPI.updateTodo(id, { completed });
+    // Confirm with server response
+    setTodos(todos.map(todo =>
+      todo._id === id ? updatedTodo : todo
+    ));
+  } catch (error) {
+    // Revert optimistic update
+    setTodos(todos.map(todo =>
+      todo._id === id ? { ...todo, completed: !completed } : todo
+    ));
+    setError('Failed to update todo');
+  }
+};</code></pre>
+        </div>
+
+        <div class="question">
+            <strong>Q: How would you implement real-time updates using WebSockets?</strong>
+        </div>
+        
+        <div class="answer">
+            <strong>A:</strong>
+            <pre><code>useEffect(() => {
+  const ws = new WebSocket('ws://localhost:5000');
+  
+  ws.onmessage = (event) => {
+    const { type, todo } = JSON.parse(event.data);
+    
+    switch (type) {
+      case 'TODO_ADDED':
+        setTodos(prev => [...prev, todo]);
+        break;
+      case 'TODO_UPDATED':
+        setTodos(prev => prev.map(t => t._id === todo._id ? todo : t));
+        break;
+      case 'TODO_DELETED':
+        setTodos(prev => prev.filter(t => t._id !== todo._id));
+        break;
+    }
+  };
+  
+  return () => ws.close();
+}, []);</code></pre>
+        </div>
+
+        <h3>12. Architecture & Scalability</h3>
+
+        <div class="question">
+            <strong>Q: How would you scale this application for larger datasets?</strong>
+        </div>
+        
+        <div class="answer">
+            <strong>A:</strong> Scaling strategies:
+            <ul>
+                <li><strong>Pagination</strong>: Implement server-side pagination</li>
+                <li><strong>Virtual scrolling</strong>: For large lists in memory</li>
+                <li><strong>Search/filtering</strong>: Server-side filtering capabilities</li>
+                <li><strong>Infinite scrolling</strong>: Load more data as user scrolls</li>
+                <li><strong>State management</strong>: Consider Redux for complex state</li>
+            </ul>
+        </div>
+
+        <div class="question">
+            <strong>Q: How would you implement offline support?</strong>
+        </div>
+        
+        <div class="answer">
+            <strong>A:</strong>
+            <pre><code>// Service Worker for caching
+// IndexedDB for offline storage
+// Sync queue for offline actions
+
+const useOfflineSync = () => {
+  const [isOnline, setIsOnline] = useState(navigator.onLine);
+  const [pendingActions, setPendingActions] = useState([]);
+
+  useEffect(() => {
+    const handleOnline = () => {
+      setIsOnline(true);
+      // Sync pending actions
+      syncPendingActions();
+    };
+
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', () => setIsOnline(false));
+    
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', () => setIsOnline(false));
+    };
+  }, []);
+};</code></pre>
+        </div>
+
+        <div class="nav-links">
+            <a href="application-flow.html">← Application Flow</a>
+            <a href="../index.html">Documentation Home</a>
+            <a href="../expressjs/application-flow.html">Express.js Flow →</a>
+        </div>
+
+        <div style="text-align: center; margin-top: 30px; padding: 20px; background-color: #f8f9fa; border-radius: 4px;">
+            <p><strong>These questions cover the full spectrum from basic React concepts to advanced architectural decisions, helping prepare for interviews ranging from junior to senior React developer positions.</strong></p>
+        </div>
+    </div>
+</body>
+</html>

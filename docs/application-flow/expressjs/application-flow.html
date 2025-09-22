@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Express.js Application Flow - Todo API</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.0/dist/mermaid.min.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f9f9f9;
+        }
+        
+        .container {
+            background-color: white;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            color: #2c3e50;
+            border-bottom: 3px solid #27ae60;
+            padding-bottom: 10px;
+            text-align: center;
+        }
+        
+        h2 {
+            color: #34495e;
+            margin-top: 40px;
+            border-left: 4px solid #27ae60;
+            padding-left: 15px;
+        }
+        
+        h3 {
+            color: #2980b9;
+            margin-top: 30px;
+        }
+        
+        .mermaid {
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        
+        .overview {
+            background-color: #ecf0f1;
+            padding: 20px;
+            border-radius: 4px;
+            border-left: 4px solid #27ae60;
+            margin-bottom: 30px;
+        }
+        
+        .patterns-section {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 4px;
+            margin: 30px 0;
+        }
+        
+        .security-section {
+            background-color: #fff5f5;
+            padding: 20px;
+            border-radius: 4px;
+            border: 1px solid #e53e3e;
+            margin: 30px 0;
+        }
+        
+        .performance-section {
+            background-color: #f0fff4;
+            padding: 20px;
+            border-radius: 4px;
+            border: 1px solid #38a169;
+        }
+        
+        ul {
+            padding-left: 20px;
+        }
+        
+        li {
+            margin-bottom: 8px;
+        }
+        
+        .pattern-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .pattern-item {
+            background-color: white;
+            padding: 15px;
+            border-radius: 4px;
+            border: 1px solid #bdc3c7;
+        }
+        
+        .pattern-item h4 {
+            color: #2980b9;
+            margin-top: 0;
+        }
+        
+        code {
+            background-color: #f4f4f4;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .nav-links {
+            text-align: center;
+            margin: 30px 0;
+            padding: 20px;
+            background-color: #27ae60;
+            border-radius: 4px;
+        }
+        
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            margin: 0 15px;
+            padding: 8px 15px;
+            border: 1px solid white;
+            border-radius: 3px;
+            display: inline-block;
+        }
+        
+        .nav-links a:hover {
+            background-color: white;
+            color: #27ae60;
+        }
+        
+        .endpoint-section {
+            background-color: #f8f9ff;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 20px 0;
+            border-left: 4px solid #6366f1;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="nav-links">
+            <a href="../reactjs/interview-questions.html">← React.js Interview</a>
+            <a href="../index.html">Documentation Home</a>
+            <a href="interview-questions.html">Interview Questions →</a>
+        </div>
+
+        <h1>Express.js Application Flow - Todo API</h1>
+        
+        <div class="overview">
+            <h2>Overview</h2>
+            <p>This document details the complete application flow for the Express.js backend of the Todo application, covering server initialization, middleware processing, route handling, and database operations.</p>
+        </div>
+
+        <h2>Server Architecture Flow</h2>
+        
+        <div class="mermaid">
+            graph TD
+                A[Server Start] --> B[Load Environment Variables]
+                B --> C[Connect to Database]
+                C --> D[Initialize Express App]
+                D --> E[Setup Middleware Chain]
+                E --> F[Register Routes]
+                F --> G[Setup Error Handling]
+                G --> H[Start HTTP Server]
+                H --> I[Listen for Requests]
+                
+                style A fill:#e3f2fd
+                style D fill:#f3e5f5
+                style E fill:#e8f5e8
+                style I fill:#fff3e0
+        </div>
+
+        <h2>Server Initialization Flow</h2>
+
+        <h3>1. Application Bootstrap Process</h3>
+
+        <div class="mermaid">
+            sequenceDiagram
+                participant Runtime
+                participant Server
+                participant Database
+                participant Express
+                participant Middleware
+
+                Runtime->>Server: node server.js
+                Server->>Server: Load dotenv config
+                Server->>Database: connectDB()
+                
+                Database->>Database: mongoose.connect(MONGODB_URI)
+                Database-->>Server: Connection established
+                
+                Server->>Express: Create app instance
+                Server->>Middleware: Setup security (helmet)
+                Server->>Middleware: Setup CORS
+                Server->>Middleware: Setup logging (morgan)
+                Server->>Middleware: Setup body parsing
+                
+                Server->>Express: Register /api/todos routes
+                Server->>Express: Register health check
+                Server->>Express: Setup 404 handler
+                Server->>Express: Setup error handler
+                
+                Server->>Server: app.listen(PORT)
+                Server-->>Runtime: Server running on port 5000
+        </div>
+
+        <h2>Middleware Chain Flow</h2>
+
+        <h3>2. Request Processing Pipeline</h3>
+
+        <div class="mermaid">
+            sequenceDiagram
+                participant Client
+                participant Helmet
+                participant CORS
+                participant Morgan
+                participant BodyParser
+                participant Router
+                participant Validation
+                participant Controller
+                participant ErrorHandler
+
+                Client->>Helmet: HTTP Request
+                Note over Helmet: Add security headers
+                Helmet->>CORS: Request with security headers
+                
+                Note over CORS: Check origin, add CORS headers
+                CORS->>Morgan: Request cleared for origin
+                
+                Note over Morgan: Log request details
+                Morgan->>BodyParser: Log: POST /api/todos 201
+                
+                Note over BodyParser: Parse JSON body
+                BodyParser->>Router: Request with parsed body
+                
+                Router->>Router: Match route pattern
+                Router->>Validation: Apply validation middleware (if required)
+                
+                alt Validation Required
+                    Validation->>Validation: Validate request data
+                    alt Validation Passes
+                        Validation->>Controller: Execute controller method
+                    else Validation Fails
+                        Validation->>ErrorHandler: ValidationError
+                        ErrorHandler-->>Client: 400 Bad Request
+                    end
+                else No Validation Required
+                    Router->>Controller: Execute controller method
+                end
+                
+                Controller->>Controller: Execute business logic
+                Controller-->>Client: Success response
+                
+                Note over ErrorHandler: Error handling (if needed)
+        </div>
+
+        <h2>API Endpoint Flows</h2>
+
+        <div class="endpoint-section">
+            <h3>3. GET /api/todos - Retrieve All Todos</h3>
+
+            <div class="mermaid">
+                sequenceDiagram
+                    participant Client
+                    participant Router
+                    participant Controller
+                    participant TodoModel
+                    participant MongoDB
+
+                    Client->>Router: GET /api/todos?completed=false&priority=high
+                    Router->>Router: Route to getAllTodos
+                    Router->>Controller: getAllTodos(req, res)
+                    
+                    Controller->>Controller: Extract query parameters
+                    Note over Controller: const { completed, priority, sort } = req.query
+                    
+                    Controller->>Controller: Build filter object
+                    Note over Controller: filter = { completed: false, priority: 'high' }
+                    
+                    Controller->>TodoModel: Todo.find(filter).sort(sort)
+                    TodoModel->>MongoDB: Execute query with indexes
+                    MongoDB-->>TodoModel: Return matching documents
+                    TodoModel-->>Controller: Return todo array
+                    
+                    Controller->>Controller: Format response
+                    Note over Controller: { success: true, count: 5, data: todos }
+                    
+                    Controller-->>Client: 200 OK with todos
+                    
+                    Note over Client,MongoDB: Error handling flow
+                    alt Database Error
+                        MongoDB-->>TodoModel: Connection/query error
+                        TodoModel-->>Controller: Database error
+                        Controller->>Controller: Log error
+                        Controller-->>Client: 500 Internal Server Error
+                    end
+            </div>
+        </div>
+
+        <div class="endpoint-section">
+            <h3>4. POST /api/todos - Create New Todo</h3>
+
+            <div class="mermaid">
+                sequenceDiagram
+                    participant Client
+                    participant Router
+                    participant Validation
+                    participant Controller
+                    participant TodoModel
+                    participant MongoDB
+
+                    Client->>Router: POST /api/todos
+                    Note over Client: { "title": "Learn React", "priority": "high" }
+                    
+                    Router->>Validation: validateCreateTodo middleware
+                    
+                    Validation->>Validation: Check title (required, max 100 chars)
+                    Validation->>Validation: Check description (optional, max 500 chars)
+                    Validation->>Validation: Check priority (enum: low/medium/high)
+                    Validation->>Validation: Check completed (boolean)
+                    
+                    alt Validation Passes
+                        Validation->>Controller: createTodo(req, res)
+                        Controller->>Controller: Check validationResult(req)
+                        
+                        Controller->>TodoModel: Todo.create(req.body)
+                        TodoModel->>TodoModel: Apply Mongoose schema validation
+                        TodoModel->>MongoDB: Insert new document
+                        
+                        MongoDB->>MongoDB: Generate ObjectId
+                        MongoDB->>MongoDB: Add timestamps
+                        MongoDB->>MongoDB: Update indexes
+                        MongoDB-->>TodoModel: Return created document
+                        
+                        TodoModel-->>Controller: Return new todo
+                        Controller-->>Client: 201 Created with todo data
+                        
+                    else Validation Fails
+                        Validation->>Validation: Format validation errors
+                        Validation-->>Client: 400 Bad Request with error details
+                    end
+                    
+                    Note over Client,MongoDB: Error scenarios
+                    alt Schema Validation Error
+                        TodoModel-->>Controller: ValidationError
+                        Controller-->>Client: 400 Bad Request with validation details
+                    else Database Error
+                        MongoDB-->>TodoModel: Database error
+                        TodoModel-->>Controller: Error object
+                        Controller-->>Client: 500 Internal Server Error
+                    end
+            </div>
+        </div>
+
+        <div class="endpoint-section">
+            <h3>5. PUT /api/todos/:id - Update Todo</h3>
+
+            <div class="mermaid">
+                sequenceDiagram
+                    participant Client
+                    participant Router
+                    participant Validation
+                    participant Controller
+                    participant TodoModel
+                    participant MongoDB
+
+                    Client->>Router: PUT /api/todos/507f1f77bcf86cd799439011
+                    Note over Client: { "completed": true, "title": "Updated title" }
+                    
+                    Router->>Router: Extract :id parameter
+                    Router->>Validation: validateUpdateTodo middleware
+                    
+                    Validation->>Validation: Validate partial update fields
+                    Validation->>Controller: updateTodo(req, res)
+                    
+                    Controller->>Controller: Extract id from req.params.id
+                    Controller->>Controller: Get updates from req.body
+                    
+                    Controller->>TodoModel: Todo.findByIdAndUpdate(id, updates, options)
+                    Note over Controller: options: { new: true, runValidators: true }
+                    
+                    TodoModel->>MongoDB: Find document by ObjectId
+                    
+                    alt Document Found
+                        MongoDB->>MongoDB: Apply schema validation to updates
+                        MongoDB->>MongoDB: Update document fields
+                        MongoDB->>MongoDB: Update timestamps (updatedAt)
+                        MongoDB->>MongoDB: Update affected indexes
+                        MongoDB-->>TodoModel: Return updated document
+                        
+                        TodoModel-->>Controller: Return updated todo
+                        Controller-->>Client: 200 OK with updated todo
+                        
+                    else Document Not Found
+                        MongoDB-->>TodoModel: Return null
+                        TodoModel-->>Controller: null result
+                        Controller-->>Client: 404 Not Found
+                        
+                    else Invalid ObjectId
+                        TodoModel-->>Controller: CastError
+                        Controller->>Controller: Handle CastError
+                        Controller-->>Client: 404 Not Found
+                        
+                    else Validation Error
+                        MongoDB-->>TodoModel: ValidationError
+                        TodoModel-->>Controller: Validation error
+                        Controller-->>Client: 400 Bad Request with details
+                    end
+            </div>
+        </div>
+
+        <div class="endpoint-section">
+            <h3>6. DELETE /api/todos/:id - Delete Todo</h3>
+
+            <div class="mermaid">
+                sequenceDiagram
+                    participant Client
+                    participant Router
+                    participant Controller
+                    participant TodoModel
+                    participant MongoDB
+
+                    Client->>Router: DELETE /api/todos/507f1f77bcf86cd799439011
+                    Router->>Router: Extract :id parameter
+                    Router->>Controller: deleteTodo(req, res)
+                    
+                    Controller->>Controller: Extract id from req.params.id
+                    Controller->>TodoModel: Todo.findByIdAndDelete(id)
+                    
+                    TodoModel->>MongoDB: Find and delete by ObjectId
+                    
+                    alt Document Found and Deleted
+                        MongoDB->>MongoDB: Remove document from collection
+                        MongoDB->>MongoDB: Update all relevant indexes
+                        MongoDB-->>TodoModel: Return deleted document
+                        
+                        TodoModel-->>Controller: Return deleted todo
+                        Controller->>Controller: Format success response
+                        Controller-->>Client: 200 OK with success message
+                        
+                    else Document Not Found
+                        MongoDB-->>TodoModel: Return null
+                        TodoModel-->>Controller: null result
+                        Controller-->>Client: 404 Not Found
+                        
+                    else Invalid ObjectId
+                        TodoModel-->>Controller: CastError
+                        Controller->>Controller: Handle CastError as 404
+                        Controller-->>Client: 404 Not Found
+                        
+                    else Database Error
+                        MongoDB-->>TodoModel: Database error
+                        TodoModel-->>Controller: Error object
+                        Controller->>Controller: Log error
+                        Controller-->>Client: 500 Internal Server Error
+                    end
+            </div>
+        </div>
+
+        <h2>Advanced API Features</h2>
+
+        <h3>7. GET /api/todos/stats - Statistics Aggregation</h3>
+
+        <div class="mermaid">
+            sequenceDiagram
+                participant Client
+                participant Router
+                participant Controller
+                participant TodoModel
+                participant MongoDB
+
+                Client->>Router: GET /api/todos/stats
+                Router->>Controller: getTodosStats(req, res)
+                
+                par Completion Statistics
+                    Controller->>TodoModel: Todo.aggregate([completion pipeline])
+                    TodoModel->>MongoDB: Aggregation: $group by completed
+                    MongoDB->>MongoDB: Calculate completion counts
+                    MongoDB-->>Controller: [{ _id: true, count: 4 }, { _id: false, count: 6 }]
+                    
+                and Priority Statistics
+                    Controller->>TodoModel: Todo.aggregate([priority pipeline])
+                    TodoModel->>MongoDB: Aggregation: $group by priority
+                    MongoDB->>MongoDB: Calculate priority counts
+                    MongoDB-->>Controller: [{ _id: 'high', count: 3 }, { _id: 'medium', count: 5 }...]
+                    
+                and Total Count
+                    Controller->>TodoModel: Todo.countDocuments()
+                    TodoModel->>MongoDB: Count all documents
+                    MongoDB-->>Controller: 10
+                end
+                
+                Controller->>Controller: Combine all statistics
+                Note over Controller: Format: { total, completed, pending, byPriority }
+                Controller-->>Client: 200 OK with statistics object
+        </div>
+
+        <h2>Error Handling Flows</h2>
+
+        <h3>8. Centralized Error Handling</h3>
+
+        <div class="mermaid">
+            sequenceDiagram
+                participant Controller
+                participant ErrorHandler
+                participant Logger
+                participant Client
+
+                Controller->>Controller: Execute business logic
+                Controller->>Controller: Database operation fails
+                
+                alt Handled Error (Known Error Type)
+                    Controller->>Controller: Catch specific error
+                    Controller->>Controller: Format error response
+                    Controller-->>Client: Appropriate HTTP status with error
+                    
+                else Unhandled Error
+                    Controller->>ErrorHandler: next(error)
+                    ErrorHandler->>Logger: Log error details
+                    ErrorHandler->>ErrorHandler: Determine error type
+                    
+                    alt Development Environment
+                        ErrorHandler->>ErrorHandler: Include stack trace
+                    else Production Environment
+                        ErrorHandler->>ErrorHandler: Generic error message
+                    end
+                    
+                    ErrorHandler-->>Client: 500 Internal Server Error
+                end
+        </div>
+
+        <h3>9. Validation Error Flow</h3>
+
+        <div class="mermaid">
+            sequenceDiagram
+                participant Client
+                participant Validation
+                participant Controller
+                participant Client as Response
+
+                Client->>Validation: Request with invalid data
+                Validation->>Validation: express-validator checks
+                
+                Validation->>Validation: Collect validation errors
+                Note over Validation: [
+                Note over Validation:   { field: 'title', msg: 'Title is required' },
+                Note over Validation:   { field: 'priority', msg: 'Invalid priority' }
+                Note over Validation: ]
+                
+                alt Validation Errors Found
+                    Validation-->>Response: 400 Bad Request
+                    Note over Response: {
+                    Note over Response:   "success": false,
+                    Note over Response:   "error": "Validation Error",
+                    Note over Response:   "details": [...errors]
+                    Note over Response: }
+                else No Validation Errors
+                    Validation->>Controller: Proceed to controller
+                    Controller->>Controller: Process valid request
+                end
+        </div>
+
+        <h2>Database Integration Patterns</h2>
+
+        <h3>10. Mongoose ODM Integration Flow</h3>
+
+        <div class="mermaid">
+            sequenceDiagram
+                participant Controller
+                participant Mongoose
+                participant MongooseSchema
+                participant MongoDB
+
+                Controller->>Mongoose: Execute model operation
+                Mongoose->>MongooseSchema: Apply schema validation
+                
+                MongooseSchema->>MongooseSchema: Validate data types
+                MongooseSchema->>MongooseSchema: Check required fields
+                MongooseSchema->>MongooseSchema: Validate string lengths
+                MongooseSchema->>MongooseSchema: Check enum values
+                
+                alt Schema Validation Passes
+                    MongooseSchema->>MongoDB: Execute database operation
+                    MongoDB->>MongoDB: Apply database constraints
+                    MongoDB-->>Mongoose: Return operation result
+                    Mongoose-->>Controller: Return formatted result
+                    
+                else Schema Validation Fails
+                    MongooseSchema-->>Mongoose: ValidationError
+                    Mongoose-->>Controller: Formatted validation error
+                end
+        </div>
+
+        <div class="performance-section">
+            <h2>Performance Optimization Flows</h2>
+
+            <h3>11. Query Optimization Pattern</h3>
+
+            <div class="mermaid">
+                sequenceDiagram
+                    participant Client
+                    participant Controller
+                    participant QueryBuilder
+                    participant IndexEngine
+                    participant MongoDB
+
+                    Client->>Controller: Request with filters/sorting
+                    Controller->>QueryBuilder: Build query with filters
+                    
+                    QueryBuilder->>QueryBuilder: Analyze query conditions
+                    Note over QueryBuilder: { completed: false, priority: 'high' }
+                    Note over QueryBuilder: .sort({ createdAt: -1 })
+                    
+                    QueryBuilder->>IndexEngine: Submit optimized query
+                    IndexEngine->>IndexEngine: Evaluate available indexes
+                    Note over IndexEngine: Use: completed_1, priority_1, createdAt_-1
+                    
+                    IndexEngine->>MongoDB: Execute with optimal index plan
+                    MongoDB-->>Controller: Return results efficiently
+            </div>
+
+            <h3>12. Caching Strategy Flow</h3>
+
+            <div class="mermaid">
+                sequenceDiagram
+                    participant Client
+                    participant Controller
+                    participant Cache
+                    participant Database
+
+                    Client->>Controller: GET /api/todos/stats
+                    Controller->>Cache: Check cache for stats
+                    
+                    alt Cache Hit
+                        Cache-->>Controller: Return cached stats
+                        Controller-->>Client: 200 OK with cached data
+                        Note over Client: Add cache headers: Cache-Control, ETag
+                        
+                    else Cache Miss
+                        Controller->>Database: Calculate fresh statistics
+                        Database-->>Controller: Return fresh stats
+                        Controller->>Cache: Store in cache with TTL
+                        Controller-->>Client: 200 OK with fresh data
+                    end
+            </div>
+        </div>
+
+        <div class="security-section">
+            <h2>Security Implementation Flows</h2>
+
+            <h3>13. Security Middleware Chain</h3>
+
+            <div class="mermaid">
+                sequenceDiagram
+                    participant Client
+                    participant Helmet
+                    participant CORS
+                    participant RateLimit
+                    participant Validator
+                    participant Controller
+
+                    Client->>Helmet: HTTP Request
+                    Helmet->>Helmet: Add security headers
+                    Note over Helmet: X-Content-Type-Options, X-Frame-Options, etc.
+                    
+                    Helmet->>CORS: Request with security headers
+                    CORS->>CORS: Validate origin
+                    CORS->>CORS: Add CORS headers
+                    
+                    CORS->>RateLimit: Validated cross-origin request
+                    RateLimit->>RateLimit: Check request rate
+                    
+                    alt Rate Limit Exceeded
+                        RateLimit-->>Client: 429 Too Many Requests
+                    else Rate Limit OK
+                        RateLimit->>Validator: Continue processing
+                        Validator->>Validator: Validate and sanitize input
+                        Validator->>Controller: Process validated request
+                    end
+            </div>
+        </div>
+
+        <h2>Environment-Based Configuration</h2>
+
+        <h3>14. Environment Configuration Flow</h3>
+
+        <div class="mermaid">
+            graph TD
+                A[Application Start] --> B{NODE_ENV}
+                
+                B -->|development| C[Development Config]
+                B -->|production| D[Production Config]
+                B -->|test| E[Test Config]
+                
+                C --> F[Enable Morgan Logging]
+                C --> G[Verbose Error Messages]
+                C --> H[CORS: localhost origins]
+                
+                D --> I[Disable Detailed Logging]
+                D --> J[Generic Error Messages]
+                D --> K[CORS: Production origins]
+                
+                E --> L[Test Database]
+                E --> M[Disable Logging]
+                E --> N[Fast Test Mode]
+        </div>
+
+        <div class="patterns-section">
+            <h2>Key Express.js Patterns Used</h2>
+            
+            <div class="pattern-list">
+                <div class="pattern-item">
+                    <h4>1. Middleware Pattern</h4>
+                    <ul>
+                        <li>Modular request processing pipeline</li>
+                        <li>Reusable middleware functions</li>
+                        <li>Error handling middleware</li>
+                    </ul>
+                </div>
+                
+                <div class="pattern-item">
+                    <h4>2. Router Pattern</h4>
+                    <ul>
+                        <li>Organized route grouping</li>
+                        <li>RESTful endpoint design</li>
+                        <li>Parameter handling</li>
+                    </ul>
+                </div>
+                
+                <div class="pattern-item">
+                    <h4>3. Controller Pattern</h4>
+                    <ul>
+                        <li>Separation of route logic and business logic</li>
+                        <li>Consistent error handling</li>
+                        <li>Async/await pattern</li>
+                    </ul>
+                </div>
+                
+                <div class="pattern-item">
+                    <h4>4. Service Layer Pattern</h4>
+                    <ul>
+                        <li>Database operations abstraction</li>
+                        <li>Reusable business logic</li>
+                        <li>Mongoose ODM integration</li>
+                    </ul>
+                </div>
+                
+                <div class="pattern-item">
+                    <h4>5. Configuration Pattern</h4>
+                    <ul>
+                        <li>Environment-based settings</li>
+                        <li>Centralized configuration management</li>
+                        <li>Secure credential handling</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="nav-links">
+            <a href="../reactjs/interview-questions.html">← React.js Interview</a>
+            <a href="../index.html">Documentation Home</a>
+            <a href="interview-questions.html">Interview Questions →</a>
+        </div>
+
+        <div style="text-align: center; margin-top: 30px; padding: 20px; background-color: #f8f9fa; border-radius: 4px;">
+            <p><strong>This Express.js application flow demonstrates modern Node.js backend patterns with proper middleware organization, error handling, security measures, and database integration through Mongoose ODM.</strong></p>
+        </div>
+    </div>
+
+    <script>
+        mermaid.initialize({ 
+            startOnLoad: true,
+            theme: 'default',
+            securityLevel: 'loose',
+            flowchart: {
+                useMaxWidth: true,
+                htmlLabels: true
+            },
+            sequence: {
+                diagramMarginX: 50,
+                diagramMarginY: 10,
+                actorMargin: 50,
+                width: 150,
+                height: 65,
+                boxMargin: 10,
+                boxTextMargin: 5,
+                noteMargin: 10,
+                messageMargin: 35,
+                useMaxWidth: true
+            }
+        });
+    </script>
+</body>
+</html>

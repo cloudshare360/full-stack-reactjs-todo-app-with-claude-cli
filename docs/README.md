@@ -1,8 +1,38 @@
-# ReactJS Todo Application - Documentation Wiki
+# Full-Stack Todo Application Architecture Documentation
 
-Welcome to the comprehensive documentation wiki for the ReactJS Todo Application. This fullstack application demonstrates modern web development practices using React 18, Express.js, and MongoDB.
+## Overview
+This documentation provides a comprehensive analysis of your full-stack ReactJS, Express.js, and MongoDB todo application with detailed sequence diagrams for each layer's operations and flows.
 
-## 📚 Documentation Structure
+## 🏗️ Architecture Documentation
+
+### 📋 [Express.js Backend Architecture](./express-js-architecture.md)
+Complete documentation of the Express.js REST API backend including:
+- **Server Configuration**: Middleware setup, security, CORS, and error handling
+- **API Endpoints**: All 6 REST endpoints with detailed sequence diagrams
+- **Route Flows**: GET, POST, PUT, DELETE operations with validation
+- **Controller Logic**: Business logic and error handling patterns
+- **Middleware Chain**: Security, validation, and error handling flow
+- **Database Integration**: Mongoose ODM integration patterns
+
+### ⚛️ [React.js Frontend Architecture](./react-js-architecture.md)
+Complete documentation of the React.js frontend including:
+- **Component Structure**: App, TodoList, AddTodoForm, TodoItem components
+- **State Management**: Local state with React hooks and callback patterns
+- **API Integration**: TodoAPI service layer with error handling
+- **User Interactions**: Form submissions, todo operations, UI flows
+- **Type Safety**: TypeScript interfaces and type definitions
+- **Component Lifecycle**: Hooks usage and re-rendering strategies
+
+### 🗄️ [MongoDB Database Architecture](./mongodb-architecture.md)
+Complete documentation of the MongoDB database layer including:
+- **Schema Design**: Todo model with validation and indexing
+- **Database Operations**: CRUD operations with Mongoose ODM
+- **Performance Optimization**: Indexing strategy and query optimization
+- **Docker Configuration**: Complete development environment setup
+- **Data Validation**: Schema-level and database-level validation
+- **Statistics and Aggregation**: Complex queries and data analysis
+
+## 📚 Additional Documentation
 
 ### [📋 Requirements](./requirements/README.md)
 - [Functional Requirements](./requirements/functional-requirements.md)

@@ -4,13 +4,34 @@ const morgan = require('morgan');
 const helmet = require('helmet');
 const dotenv = require('dotenv');
 
+// Load env vars first
+dotenv.config();
+
+// Debug setup
+const debug = require('debug');
+const appDebug = debug('app:server');
+const dbDebug = debug('app:database');
+
 const connectDB = require('./src/config/database');
 const todoRoutes = require('./src/routes/todoRoutes');
 const errorHandler = require('./src/middleware/errorHandler');
 
-// Load environment configuration
-dotenv.config();
-const { getConfig, getCORSOrigins, printConfig } = require('../config/environment');
+// Environment validation
+const requiredEnvVars = ['MONGODB_URI'];
+const missingEnvVars = requiredEnvVars.filter(envVar => !process.env[envVar]);
+
+if (missingEnvVars.length > 0) {
+  console.error('❌ Missing required environment variables:', missingEnvVars);
+  console.log('💡 Create a .env file with the following variables:');
+  missingEnvVars.forEach(envVar => {
+    console.log(`   ${envVar}=your_value_here`);
+  });
+  process.exit(1);
+}
+
+appDebug('🚀 Starting Express.js Todo API Server');
+appDebug('📝 Environment: %s', process.env.NODE_ENV || 'development');
+appDebug('🔧 Debug mode enabled');
 
 // Connect to database
 connectDB();
@@ -20,24 +41,12 @@ const app = express();
 // Security middleware
 app.use(helmet());
 
-// Dynamic CORS middleware
-const corsOrigins = getCORSOrigins();
+// CORS middleware
 app.use(cors({
-  origin: function (origin, callback) {
-    // Allow requests with no origin (like mobile apps or Postman)
-    if (!origin) return callback(null, true);
-
-    if (corsOrigins.indexOf(origin) !== -1 || process.env.NODE_ENV === 'development') {
-      return callback(null, true);
-    } else {
-      console.log(`❌ CORS blocked origin: ${origin}`);
-      return callback(new Error('Not allowed by CORS'));
-    }
-  },
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin'],
-  exposedHeaders: ['X-Total-Count', 'X-Page-Count']
+  origin: process.env.NODE_ENV === 'production'
+    ? 'https://yourdomain.com'
+    : ['http://localhost:3000', 'http://localhost:3001'],
+  credentials: true
 }));
 
 // Logging middleware
@@ -84,34 +93,82 @@ app.use((req, res) => {
 // Error handler middleware (must be last)
 app.use(errorHandler);
 
-const config = getConfig();
-const PORT = config.api.port;
+const PORT = process.env.PORT || 5000;
 
-const server = app.listen(PORT, () => {
-  console.log(`🚀 Todo API Server Started Successfully!`);
-
-  // Print dynamic configuration
-  printConfig();
-
-  console.log(`📊 Health Check: ${config.api.baseURL}/api/health`);
-  console.log(`✅ Server ready to accept connections\n`);
+const server = app.listen(PORT, '0.0.0.0', () => {
+  
+  console.log('\n' + '='.repeat(60));
+  console.log('🚀 EXPRESS.JS TODO API SERVER STARTED');
+  console.log('='.repeat(60));
+  console.log(`📍 Environment: ${process.env.NODE_ENV || 'development'}`);
+  console.log(`🌐 Server Address: http://localhost:${PORT}`);
+  console.log(`🔧 API Base URL: http://localhost:${PORT}/api`);
+  console.log(`📊 Health Check: http://localhost:${PORT}/api/health`);
+  console.log(`📱 Frontend URL: ${process.env.FRONTEND_URL || 'http://localhost:3000'}`);
+  
+  if (process.env.NODE_ENV === 'development') {
+    console.log('\n🔧 DEBUG MODE ENABLED');
+    console.log(`🐛 Debug Inspector: chrome://inspect`);
+    console.log(`🔍 Server Port: ${PORT}`);
+    console.log(`🔍 Debug Port: 9229 (default inspector port)`);
+    console.log('📝 Debug Namespaces: app:*, express:*');
+    console.log('💡 Set DEBUG=* for verbose logging');
+  }
+  
+  console.log('\n📋 Available Endpoints:');
+  console.log('   GET    /api/todos        - Get all todos');
+  console.log('   POST   /api/todos        - Create new todo');
+  console.log('   GET    /api/todos/:id    - Get todo by ID');
+  console.log('   PUT    /api/todos/:id    - Update todo');
+  console.log('   DELETE /api/todos/:id    - Delete todo');
+  console.log('   GET    /api/health       - Health check');
+  console.log('='.repeat(60) + '\n');
+  
+  appDebug('✅ Server listening on port %d', PORT);
 });
 
-// Handle unhandled promise rejections
+// Enhanced error handling
 process.on('unhandledRejection', (err, promise) => {
-  console.log(`Error: ${err.message}`);
+  console.error('🔴 Unhandled Promise Rejection:', err.message);
+  appDebug('Unhandled Promise Rejection: %O', err);
+  
   // Close server & exit process
+  console.log('🛑 Shutting down server due to unhandled promise rejection...');
   server.close(() => {
     process.exit(1);
   });
 });
 
+process.on('uncaughtException', (err) => {
+  console.error('🔴 Uncaught Exception:', err.message);
+  appDebug('Uncaught Exception: %O', err);
+  
+  console.log('🛑 Shutting down server due to uncaught exception...');
+  process.exit(1);
+});
+
 // Handle SIGTERM
 process.on('SIGTERM', () => {
-  console.log('👋 SIGTERM received');
-  console.log('✋ Shutting down gracefully');
+  console.log('\n👋 SIGTERM received');
+  console.log('✋ Shutting down gracefully...');
+  appDebug('SIGTERM received, shutting down gracefully');
+  
   server.close(() => {
     console.log('💥 Process terminated');
+    appDebug('HTTP server closed');
+  });
+});
+
+// Handle SIGINT (Ctrl+C)
+process.on('SIGINT', () => {
+  console.log('\n👋 SIGINT received (Ctrl+C)');
+  console.log('✋ Shutting down gracefully...');
+  appDebug('SIGINT received, shutting down gracefully');
+  
+  server.close(() => {
+    console.log('💥 Process terminated');
+    appDebug('HTTP server closed');
+    process.exit(0);
   });
 });
 
