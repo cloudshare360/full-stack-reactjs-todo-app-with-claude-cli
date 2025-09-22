@@ -110,7 +110,8 @@ const server = app.listen(PORT, '0.0.0.0', () => {
   if (process.env.NODE_ENV === 'development') {
     console.log('\n🔧 DEBUG MODE ENABLED');
     console.log(`🐛 Debug Inspector: chrome://inspect`);
-    console.log(`🔍 Debug Port: ${serverInfo.port}`);
+    console.log(`🔍 Server Port: ${PORT}`);
+    console.log(`🔍 Debug Port: 9229 (default inspector port)`);
     console.log('📝 Debug Namespaces: app:*, express:*');
     console.log('💡 Set DEBUG=* for verbose logging');
   }
