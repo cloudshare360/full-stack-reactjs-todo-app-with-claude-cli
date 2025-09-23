@@ -22,8 +22,10 @@ info:
     url: https://opensource.org/licenses/MIT
 
 servers:
+  - url: https://humble-meme-7x5ggrxq6rgcrpwr-5000.app.github.dev
+    description: GitHub Codespaces Server (Primary)
   - url: http://localhost:5000
-    description: Development server
+    description: Local Development Server
 
 paths:
   /api/todos:

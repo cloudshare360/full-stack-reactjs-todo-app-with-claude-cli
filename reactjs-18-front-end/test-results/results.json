@@ -1,7 +1,7 @@
 {
   "config": {
-    "configFile": "/home/sri/Documents/reactjs-todo-application/reactjs-18-front-end/playwright.config.js",
-    "rootDir": "/home/sri/Documents/reactjs-todo-application/reactjs-18-front-end/tests/e2e",
+    "configFile": "/workspaces/full-stack-reactjs-todo-app-with-claude-cli/reactjs-18-front-end/playwright.config.js",
+    "rootDir": "/workspaces/full-stack-reactjs-todo-app-with-claude-cli/reactjs-18-front-end/tests/e2e",
     "forbidOnly": false,
     "fullyParallel": true,
     "globalSetup": null,
@@ -10,9 +10,7 @@
     "grep": {},
     "grepInvert": null,
     "maxFailures": 0,
-    "metadata": {
-      "actualWorkers": 1
-    },
+    "metadata": {},
     "preserveOutput": "always",
     "reporter": [
       [
@@ -37,87 +35,68 @@
     "quiet": false,
     "projects": [
       {
-        "outputDir": "/home/sri/Documents/reactjs-todo-application/reactjs-18-front-end/test-results",
+        "outputDir": "/workspaces/full-stack-reactjs-todo-app-with-claude-cli/reactjs-18-front-end/test-results",
         "repeatEach": 1,
         "retries": 0,
-        "metadata": {
-          "actualWorkers": 1
-        },
+        "metadata": {},
         "id": "chromium",
         "name": "chromium",
-        "testDir": "/home/sri/Documents/reactjs-todo-application/reactjs-18-front-end/tests/e2e",
+        "testDir": "/workspaces/full-stack-reactjs-todo-app-with-claude-cli/reactjs-18-front-end/tests/e2e",
         "testIgnore": [],
         "testMatch": [
           "**/*.@(spec|test).?(c|m)[jt]s?(x)"
         ],
-        "timeout": 15000
+        "timeout": 30000
       }
     ],
     "shard": null,
     "updateSnapshots": "missing",
     "updateSourceMethod": "patch",
     "version": "1.55.0",
-    "workers": 2,
+    "workers": 1,
     "webServer": null
   },
-  "suites": [
+  "suites": [],
+  "errors": [
     {
-      "title": "todo-app.spec.js",
-      "file": "todo-app.spec.js",
-      "column": 0,
-      "line": 0,
-      "specs": [],
-      "suites": [
-        {
-          "title": "Todo Application - Complete User Journey",
-          "file": "todo-app.spec.js",
-          "line": 4,
-          "column": 6,
-          "specs": [
-            {
-              "title": "should load the homepage with initial elements",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 15000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "chromium",
-                  "projectName": "chromium",
-                  "results": [
-                    {
-                      "workerIndex": 0,
-                      "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 800,
-                      "errors": [],
-                      "stdout": [],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2025-09-21T16:49:41.316Z",
-                      "annotations": [],
-                      "attachments": []
-                    }
-                  ],
-                  "status": "expected"
-                }
-              ],
-              "id": "22af52adfa1a1a02a70f-aab5722352ca9b468d25",
-              "file": "todo-app.spec.js",
-              "line": 13,
-              "column": 3
-            }
-          ]
-        }
-      ]
+      "message": "Error: Playwright Test did not expect test.describe() to be called here.\nMost common reasons include:\n- You are calling test.describe() in a configuration file.\n- You are calling test.describe() in a file that is imported by the configuration file.\n- You have two different versions of @playwright/test. This usually happens\n  when one of the dependencies in your package.json depends on @playwright/test.",
+      "stack": "Error: Playwright Test did not expect test.describe() to be called here.\nMost common reasons include:\n- You are calling test.describe() in a configuration file.\n- You are calling test.describe() in a file that is imported by the configuration file.\n- You have two different versions of @playwright/test. This usually happens\n  when one of the dependencies in your package.json depends on @playwright/test.\n    at TestTypeImpl._currentSuite (/workspaces/full-stack-reactjs-todo-app-with-claude-cli/reactjs-18-front-end/node_modules/playwright/lib/common/testType.js:74:13)\n    at TestTypeImpl._describe (/workspaces/full-stack-reactjs-todo-app-with-claude-cli/reactjs-18-front-end/node_modules/playwright/lib/common/testType.js:114:24)\n    at Function.describe (/workspaces/full-stack-reactjs-todo-app-with-claude-cli/reactjs-18-front-end/node_modules/playwright/lib/transform/transform.js:275:12)\n    at Object.<anonymous> (/workspaces/full-stack-reactjs-todo-app-with-claude-cli/reactjs-18-front-end/tests/e2e/api-integration.spec.js:4:6)",
+      "location": {
+        "file": "/workspaces/full-stack-reactjs-todo-app-with-claude-cli/reactjs-18-front-end/tests/e2e/api-integration.spec.js",
+        "column": 6,
+        "line": 4
+      },
+      "snippet": "\u001b[90m   at \u001b[39mapi-integration.spec.js:4\n\n\u001b[0m \u001b[90m 2 |\u001b[39m \u001b[36mconst\u001b[39m { test\u001b[33m,\u001b[39m expect } \u001b[33m=\u001b[39m require(\u001b[32m'@playwright/test'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 3 |\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 4 |\u001b[39m test\u001b[33m.\u001b[39mdescribe(\u001b[32m'API Integration Tests'\u001b[39m\u001b[33m,\u001b[39m () \u001b[33m=>\u001b[39m {\n \u001b[90m   |\u001b[39m      \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 5 |\u001b[39m   \u001b[36mconst\u001b[39m \u001b[33mAPI_BASE\u001b[39m \u001b[33m=\u001b[39m \u001b[32m'http://localhost:5000/api'\u001b[39m\u001b[33m;\u001b[39m\n \u001b[90m 6 |\u001b[39m\n \u001b[90m 7 |\u001b[39m   test(\u001b[32m'should verify backend API is running'\u001b[39m\u001b[33m,\u001b[39m \u001b[36masync\u001b[39m ({ request }) \u001b[33m=>\u001b[39m {\u001b[0m"
+    },
+    {
+      "message": "Error: Playwright Test did not expect test.describe() to be called here.\nMost common reasons include:\n- You are calling test.describe() in a configuration file.\n- You are calling test.describe() in a file that is imported by the configuration file.\n- You have two different versions of @playwright/test. This usually happens\n  when one of the dependencies in your package.json depends on @playwright/test.",
+      "stack": "Error: Playwright Test did not expect test.describe() to be called here.\nMost common reasons include:\n- You are calling test.describe() in a configuration file.\n- You are calling test.describe() in a file that is imported by the configuration file.\n- You have two different versions of @playwright/test. This usually happens\n  when one of the dependencies in your package.json depends on @playwright/test.\n    at TestTypeImpl._currentSuite (/workspaces/full-stack-reactjs-todo-app-with-claude-cli/reactjs-18-front-end/node_modules/playwright/lib/common/testType.js:74:13)\n    at TestTypeImpl._describe (/workspaces/full-stack-reactjs-todo-app-with-claude-cli/reactjs-18-front-end/node_modules/playwright/lib/common/testType.js:114:24)\n    at Function.describe (/workspaces/full-stack-reactjs-todo-app-with-claude-cli/reactjs-18-front-end/node_modules/playwright/lib/transform/transform.js:275:12)\n    at Object.<anonymous> (/workspaces/full-stack-reactjs-todo-app-with-claude-cli/reactjs-18-front-end/tests/e2e/comprehensive-todo-flows.spec.js:4:6)",
+      "location": {
+        "file": "/workspaces/full-stack-reactjs-todo-app-with-claude-cli/reactjs-18-front-end/tests/e2e/comprehensive-todo-flows.spec.js",
+        "column": 6,
+        "line": 4
+      },
+      "snippet": "\u001b[90m   at \u001b[39mcomprehensive-todo-flows.spec.js:4\n\n\u001b[0m \u001b[90m 2 |\u001b[39m \u001b[36mconst\u001b[39m { test\u001b[33m,\u001b[39m expect } \u001b[33m=\u001b[39m require(\u001b[32m'@playwright/test'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 3 |\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 4 |\u001b[39m test\u001b[33m.\u001b[39mdescribe(\u001b[32m'Comprehensive Todo Application Flows'\u001b[39m\u001b[33m,\u001b[39m () \u001b[33m=>\u001b[39m {\n \u001b[90m   |\u001b[39m      \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 5 |\u001b[39m   \n \u001b[90m 6 |\u001b[39m   test\u001b[33m.\u001b[39mbeforeEach(\u001b[36masync\u001b[39m ({ page }) \u001b[33m=>\u001b[39m {\n \u001b[90m 7 |\u001b[39m     \u001b[90m// Navigate to the application and wait for load\u001b[39m\u001b[0m"
+    },
+    {
+      "message": "Error: Playwright Test did not expect test.describe() to be called here.\nMost common reasons include:\n- You are calling test.describe() in a configuration file.\n- You are calling test.describe() in a file that is imported by the configuration file.\n- You have two different versions of @playwright/test. This usually happens\n  when one of the dependencies in your package.json depends on @playwright/test.",
+      "stack": "Error: Playwright Test did not expect test.describe() to be called here.\nMost common reasons include:\n- You are calling test.describe() in a configuration file.\n- You are calling test.describe() in a file that is imported by the configuration file.\n- You have two different versions of @playwright/test. This usually happens\n  when one of the dependencies in your package.json depends on @playwright/test.\n    at TestTypeImpl._currentSuite (/workspaces/full-stack-reactjs-todo-app-with-claude-cli/reactjs-18-front-end/node_modules/playwright/lib/common/testType.js:74:13)\n    at TestTypeImpl._describe (/workspaces/full-stack-reactjs-todo-app-with-claude-cli/reactjs-18-front-end/node_modules/playwright/lib/common/testType.js:114:24)\n    at Function.describe (/workspaces/full-stack-reactjs-todo-app-with-claude-cli/reactjs-18-front-end/node_modules/playwright/lib/transform/transform.js:275:12)\n    at Object.<anonymous> (/workspaces/full-stack-reactjs-todo-app-with-claude-cli/reactjs-18-front-end/tests/e2e/todo-app.spec.js:4:6)",
+      "location": {
+        "file": "/workspaces/full-stack-reactjs-todo-app-with-claude-cli/reactjs-18-front-end/tests/e2e/todo-app.spec.js",
+        "column": 6,
+        "line": 4
+      },
+      "snippet": "\u001b[90m   at \u001b[39mtodo-app.spec.js:4\n\n\u001b[0m \u001b[90m 2 |\u001b[39m \u001b[36mconst\u001b[39m { test\u001b[33m,\u001b[39m expect } \u001b[33m=\u001b[39m require(\u001b[32m'@playwright/test'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 3 |\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 4 |\u001b[39m test\u001b[33m.\u001b[39mdescribe(\u001b[32m'Todo Application - Complete User Journey'\u001b[39m\u001b[33m,\u001b[39m () \u001b[33m=>\u001b[39m {\n \u001b[90m   |\u001b[39m      \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 5 |\u001b[39m   test\u001b[33m.\u001b[39mbeforeEach(\u001b[36masync\u001b[39m ({ page }) \u001b[33m=>\u001b[39m {\n \u001b[90m 6 |\u001b[39m     \u001b[90m// Navigate to the application\u001b[39m\n \u001b[90m 7 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mgoto(\u001b[32m'/'\u001b[39m)\u001b[33m;\u001b[39m\u001b[0m"
+    },
+    {
+      "message": "Error: No tests found",
+      "stack": "Error: No tests found"
     }
   ],
-  "errors": [],
   "stats": {
-    "startTime": "2025-09-21T16:49:40.526Z",
-    "duration": 1873.0819999999999,
-    "expected": 1,
+    "startTime": "2025-09-23T00:37:58.426Z",
+    "duration": 286.69399999999996,
+    "expected": 0,
     "skipped": 0,
     "unexpected": 0,
     "flaky": 0

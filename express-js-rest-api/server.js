@@ -42,10 +42,20 @@ const app = express();
 app.use(helmet());
 
 // CORS middleware
+const allowedOrigins = process.env.NODE_ENV === 'production'
+  ? ['https://yourdomain.com']
+  : [
+      'http://localhost:3000', 
+      'http://localhost:3001',
+      'http://localhost:8000',
+      process.env.FRONTEND_URL,
+      process.env.SWAGGER_UI_URL,
+      process.env.CODESPACES_FRONTEND_URL,
+      process.env.CODESPACES_SWAGGER_UI_URL
+    ].filter(Boolean); // Remove any undefined values
+
 app.use(cors({
-  origin: process.env.NODE_ENV === 'production'
-    ? 'https://yourdomain.com'
-    : ['http://localhost:3000', 'http://localhost:3001'],
+  origin: allowedOrigins,
   credentials: true
 }));
 

@@ -91,28 +91,32 @@
       setInterval(checkAPIStatus, 30000);
 
       // Initialize Swagger UI
-      // Dynamic API server detection
+      // Dynamic API server detection for GitHub Codespaces and local development
       function getAPIServerURL() {
         const hostname = window.location.hostname;
         const protocol = window.location.protocol;
-        const apiPort = '5000'; // Default API port
 
-        // For localhost, use localhost; otherwise use current hostname
-        const apiHost = hostname === 'localhost' ? 'localhost' : hostname;
-
-        return `${protocol}//${apiHost}:${apiPort}`;
+        // Check if running in GitHub Codespaces
+        if (hostname.includes('.app.github.dev')) {
+          // For GitHub Codespaces, replace the port in the URL
+          // From: https://humble-meme-7x5ggrxq6rgcrpwr-8000.app.github.dev
+          // To:   https://humble-meme-7x5ggrxq6rgcrpwr-5000.app.github.dev
+          const apiUrl = hostname.replace('-8000.app.github.dev', '-5000.app.github.dev');
+          return `${protocol}//${apiUrl}`;
+        }
+        
+        // For localhost development
+        return 'http://localhost:5000';
       }
+
+      // Get the dynamic API server URL
+      const dynamicApiUrl = getAPIServerURL();
+      console.log('Dynamic API URL detected:', dynamicApiUrl);
 
       const ui = SwaggerUIBundle({
         url: './todo-api-swagger.yaml',
         dom_id: '#swagger-ui',
         deepLinking: true,
-        servers: [
-          {
-            url: getAPIServerURL(),
-            description: 'Dynamic API Server'
-          }
-        ],
         presets: [
           SwaggerUIBundle.presets.apis,
           SwaggerUIBundle.presets.standalone
@@ -120,10 +124,13 @@
         plugins: [
           SwaggerUIBundle.plugins.DownloadUrl
         ],
-        layout: "StandaloneLayout",
+        layout: "BaseLayout",
         tryItOutEnabled: true,
         requestInterceptor: (request) => {
-          // Add any request interceptors here
+          // Force all requests to use the dynamic API URL
+          if (request.url.startsWith('http://localhost:5000')) {
+            request.url = request.url.replace('http://localhost:5000', dynamicApiUrl);
+          }
           console.log('Making request to:', request.url);
           return request;
         },
@@ -134,6 +141,36 @@
         },
         onComplete: () => {
           console.log('Swagger UI loaded successfully');
+          console.log('Current hostname:', window.location.hostname);
+          console.log('Detected API Server URL:', dynamicApiUrl);
+          
+          // Force update the server URL in the UI
+          try {
+            ui.specActions.updateSpec({
+              servers: [
+                {
+                  url: dynamicApiUrl,
+                  description: 'Auto-detected API Server'
+                },
+                {
+                  url: 'http://localhost:5000',
+                  description: 'Local Development Server'
+                }
+              ]
+            });
+          } catch (error) {
+            console.error('Failed to update servers:', error);
+          }
+          
+          // Also try to update the server selection directly
+          setTimeout(() => {
+            const serverSelect = document.querySelector('.servers select');
+            if (serverSelect) {
+              serverSelect.value = dynamicApiUrl;
+              serverSelect.dispatchEvent(new Event('change'));
+              console.log('Updated server selection to:', dynamicApiUrl);
+            }
+          }, 1000);
         },
         onFailure: (error) => {
           console.error('Swagger UI failed to load:', error);
@@ -152,24 +189,61 @@
 
       // Add custom functionality after UI loads
       setTimeout(() => {
-        // Add custom buttons or functionality
+        // Add server info and custom buttons
         const topbar = document.querySelector('.swagger-ui .topbar');
         if (topbar) {
           const customActions = document.createElement('div');
-          customActions.style.cssText = 'float: right; padding: 10px;';
+          customActions.style.cssText = 'float: right; padding: 10px; color: white;';
           customActions.innerHTML = `
-            <button onclick="window.open('./test-results.html', '_blank')"
-                    style="background: #61affe; color: white; border: none; padding: 8px 16px; border-radius: 4px; margin-left: 10px; cursor: pointer;">
-              View Test Results
+            <div style="display: inline-block; margin-right: 15px; font-size: 12px;">
+              <strong>API Server:</strong><br>
+              <span id="current-server-url" style="font-family: monospace;">${dynamicApiUrl}</span>
+            </div>
+            <button onclick="testApiConnection()" 
+                    style="background: #f39c12; color: white; border: none; padding: 6px 12px; border-radius: 4px; margin-left: 5px; cursor: pointer; font-size: 11px;">
+              Test API
             </button>
             <button onclick="location.reload()"
-                    style="background: #49cc90; color: white; border: none; padding: 8px 16px; border-radius: 4px; margin-left: 10px; cursor: pointer;">
+                    style="background: #49cc90; color: white; border: none; padding: 6px 12px; border-radius: 4px; margin-left: 5px; cursor: pointer; font-size: 11px;">
               Refresh
             </button>
           `;
           topbar.appendChild(customActions);
         }
+
+        // Add a debug panel
+        const debugPanel = document.createElement('div');
+        debugPanel.style.cssText = 'background: #f8f8f8; padding: 15px; margin: 20px; border-radius: 5px; border-left: 4px solid #2E86AB;';
+        debugPanel.innerHTML = `
+          <h4>🔧 Debug Information</h4>
+          <p><strong>Current URL:</strong> ${window.location.href}</p>
+          <p><strong>Detected API Server:</strong> <code>${dynamicApiUrl}</code></p>
+          <p><strong>API Status:</strong> <span id="cors-test-result">Click "Test API" to check connection</span></p>
+        `;
+        
+        const swaggerContainer = document.getElementById('swagger-ui');
+        if (swaggerContainer) {
+          swaggerContainer.parentNode.insertBefore(debugPanel, swaggerContainer);
+        }
       }, 1000);
+
+      // Add API connection test function
+      window.testApiConnection = async function() {
+        const resultSpan = document.getElementById('cors-test-result');
+        resultSpan.innerHTML = 'Testing...';
+        
+        try {
+          const response = await fetch(`${dynamicApiUrl}/api/health`);
+          if (response.ok) {
+            const data = await response.json();
+            resultSpan.innerHTML = `<span style="color: green;">✅ Connected - ${data.message}</span>`;
+          } else {
+            resultSpan.innerHTML = `<span style="color: red;">❌ Failed - HTTP ${response.status}</span>`;
+          }
+        } catch (error) {
+          resultSpan.innerHTML = `<span style="color: red;">❌ Error - ${error.message}</span>`;
+        }
+      };
     }
   </script>
 </body>

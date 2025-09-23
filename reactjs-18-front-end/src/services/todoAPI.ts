@@ -1,6 +1,27 @@
 import { Todo, CreateTodoRequest, UpdateTodoRequest } from '../types/Todo';
 
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+// Dynamic API URL detection for different environments
+const getAPIBaseURL = (): string => {
+  // Use environment variable if explicitly set
+  if (process.env.REACT_APP_API_URL) {
+    return process.env.REACT_APP_API_URL;
+  }
+
+  // Auto-detect environment
+  const hostname = window.location.hostname;
+  
+  // GitHub Codespaces detection
+  if (hostname.includes('.app.github.dev')) {
+    // Replace the React port with API port
+    const apiUrl = hostname.replace('-3001.app.github.dev', '-5000.app.github.dev');
+    return `https://${apiUrl}/api`;
+  }
+  
+  // Default to localhost for local development
+  return 'http://localhost:5000/api';
+};
+
+const API_BASE_URL = getAPIBaseURL();
 
 class TodoAPI {
   async getAllTodos(): Promise<Todo[]> {
